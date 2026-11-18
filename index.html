@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ماشین‌حساب نفیس</title>
+<meta name="theme-color" content="#0f4c4f">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="ماشین‌حساب نفیس">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<style>
+:root{--bg:#fff;--card:#eef4f3;--ink:#10292b;--mut:#5d7b7b;--pri:#0f4c4f;--gold:#d9a441;--red:#e4572e;--ok:#2e8b8b;--on:#fff;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0d1b1c;--card:#16292b;--ink:#e8f1f0;--mut:#9bb7b6;--pri:#1d7a7e;--on:#fff;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0d1b1c;--card:#16292b;--ink:#e8f1f0;--mut:#9bb7b6;--pri:#1d7a7e;--on:#fff;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Tahoma,Arial,sans-serif;line-height:1.7}
+main{max-width:980px;margin:auto;padding:16px}
+h1{margin:4px 0 2px;font-size:24px;color:var(--pri)}h2{font-size:17px;margin:0 0 10px}
+.sub{color:var(--mut);margin:0 0 14px;font-size:14px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:760px){.grid{grid-template-columns:1fr}}
+.card{background:var(--card);border-radius:14px;padding:14px}
+.row{display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap}
+.hand{margin-bottom:12px}
+.hand b{min-width:58px}
+input[type=text]{width:170px;padding:7px 9px;border-radius:8px;border:1px solid var(--mut);background:var(--bg);color:var(--ink);font-size:16px;direction:ltr;text-align:left}
+input[type=range]{flex:1 1 100%;accent-color:var(--gold)}
+button,select{font-family:inherit;font-size:14px;border-radius:9px;border:0;padding:7px 12px;cursor:pointer;background:var(--pri);color:var(--on)}
+button.alt,select{background:var(--bg);color:var(--ink);border:1px solid var(--mut)}
+button.s{padding:5px 10px;background:var(--bg);color:var(--ink);border:1px solid var(--mut)}
+button.x{background:transparent;color:var(--red);padding:2px 8px;font-size:20px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{padding:6px 10px;border-radius:20px;background:var(--bg);border:1px solid var(--mut);font-size:13px}
+.chip.on{background:var(--gold);color:#10292b;border-color:var(--gold);font-weight:700}
+.big{font-size:34px;font-weight:700;color:var(--pri)}
+.tot{background:var(--pri);color:var(--on);border-radius:14px;padding:16px;text-align:center;margin-bottom:14px}
+.tot .big{color:var(--gold)}
+.bar{height:22px;border-radius:7px;background:var(--bg);display:flex;overflow:hidden;margin:4px 0 10px}
+.bar i{display:block;height:100%}
+.wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:14px}td,th{padding:5px 4px;text-align:center;border-bottom:1px solid var(--bg)}
+.st{font-size:14px;margin:0;padding:0;list-style:none}.st li{padding:5px 0;border-bottom:1px dashed var(--mut)}
+.red{color:var(--red)}.ok{color:var(--ok)}.mut{color:var(--mut);font-size:13px}
+[hidden]{display:none!important}.foot{text-align:center;color:var(--mut);font-size:13px;margin:22px 0 8px}</style>
+</head>
+<body>
+<main>
+<h1>ماشین‌حساب پلن نفیس</h1>
+<p class="sub">مبلغ فروش هر دست را (به تومان) وارد کنید. هر ۱٬۰۰۰ تومان فروش = ۱ امتیاز.</p>
+
+<div class="card" id="instcard" style="margin-bottom:14px" hidden>
+<div class="row"><button id="inst" hidden>نصب روی گوشی</button><span class="mut" id="ios" hidden>برای نصب: در Safari دکمه‌ی اشتراک‌گذاری را بزنید و «Add to Home Screen» را انتخاب کنید.</span></div>
+</div>
+
+<div class="card" style="margin-bottom:14px">
+<h2>نمونه‌های آماده</h2>
+<div class="row"><select id="lv"></select>
+<button data-n="2">۲ دست</button><button data-n="3">۳ دست</button><button data-n="4">۴ دست</button></div>
+</div>
+
+<div class="grid">
+<section class="card">
+<h2>دست‌ها (مبلغ فروش، تومان)</h2>
+<div class="row"><label class="mut"><input type="checkbox" id="sl"> نمایش اسلایدر</label></div>
+<div id="rows"></div>
+<div class="row"><button id="add">+ افزودن دست</button><button class="alt" id="rst">بازنشانی</button></div>
+</section>
+
+<section>
+<div class="tot"><div>درآمد پاداش نفیس</div><div class="big" id="inc">۰</div><div>تومان</div><div id="parts" style="font-size:13px;margin-top:8px"></div></div>
+<div class="card" style="margin-bottom:14px">
+<h2>سمت کارآفرینی</h2><div class="chips" id="chips"></div><div class="mut" id="nxt" style="margin-top:8px"></div>
+</div>
+<div class="card"><h2>رتبه و نرخ</h2><div id="rank"></div></div>
+</section>
+</div>
+
+<div class="grid" style="margin-top:14px">
+<section class="card">
+<h2>محاسبه‌ی دست‌ها</h2>
+<div class="wrap"><table><thead><tr><th>دست</th><th>فروش (تومان)</th><th>امتیاز</th><th>ضریب</th><th>بعد از ضریب</th></tr></thead><tbody id="tb"></tbody></table></div>
+</section>
+<section class="card">
+<h2>قانون سوخت</h2>
+<div class="mut">دست اول فقط به‌اندازه‌ی مجموع دست‌های بعدی (بعد از ضریب) شمرده می‌شود.</div>
+<div style="margin-top:8px">دست اول (سبز: شمرده‌شده، قرمز: سوخته)</div><div class="bar" id="b1"></div>
+<div>مجموع دست‌های ۲ به بعد (بعد از ضریب)</div><div class="bar" id="b2"></div>
+<div id="burn"></div>
+</section>
+</div>
+
+<section class="card" style="margin-top:14px">
+<h2>شرط رتبه‌ها و نرخ ۴۰ هزار امتیاز اول</h2>
+<div class="wrap"><table><thead><tr><th>رتبه</th><th>شرط (مبلغ فروش)</th><th>نرخ</th></tr></thead><tbody>
+<tr><td>نماینده</td><td>۲ دست بالای ۳ میلیون</td><td>۵۰</td></tr>
+<tr><td>حامی نقره‌ای</td><td>۱ دست ۳۰ میلیون + گروه شخصی ۱۰ میلیون</td><td>۴۰</td></tr>
+<tr><td>حامی طلایی</td><td>۲ دست بالای ۳۰ میلیون + گروه شخصی ۱۰ میلیون</td><td>۸۰</td></tr>
+<tr><td>طلایی تک‌ستاره</td><td>۲ دست بالای ۳۰ میلیون + ۱ دست بالای ۱۵ میلیون</td><td>۱۲۰</td></tr>
+<tr><td>پلاتینیوم</td><td>۳ دست بالای ۳۰ میلیون + گروه شخصی ۱۰ میلیون</td><td>۱۳۰</td></tr>
+<tr><td>الماس</td><td>۴ دست بالای ۳۰ میلیون</td><td>۱۷۰</td></tr>
+<tr><td>ویژه</td><td>۳ دست بالای ۵۰ میلیون (حداقل طلایی)</td><td>۲۴۰</td></tr>
+<tr><td>الماس پلاس</td><td>۴ دست بالای ۵۰ میلیون</td><td>۲۶۰</td></tr>
+</tbody></table></div>
+<div class="mut" style="margin-top:8px">گروه شخصی = جمع دست‌های کوچک‌تر از ۳۰ میلیون؛ دست اضافه‌ی بالای ۳۰ میلیون هم می‌تواند جای آن بنشیند. مابقی امتیازها در همه‌ی رتبه‌ها × ۱۸٫۵.</div>
+</section>
+
+<section class="card" style="margin-top:14px">
+<h2>مراحل محاسبه</h2>
+<ul class="st" id="steps"></ul>
+</section>
+<div class="foot">طراح: محمد سیستانی</div>
+</main>
+<script>
+var LV=[["کوشا",7500000],["پویا",15000000],["پیشرو",30000000],["سازنده",60000000],["نفیس",100000000]];
+// presets in points (x1000 = toman)
+var PRE={0:{2:[144000,86000],3:[44000,33000,20000],4:[35000,30000,21000,16000]},
+1:{2:[340000,170000],3:[83000,66000,50000],4:[68000,61000,48000,34000]},
+2:{2:[573000,401000],3:[270000,203000,122000],4:[168000,134000,101000,84000]},
+3:{2:[1163000,814000],3:[718000,431000,323000],4:[383000,345000,268000,192000]},
+4:{2:[2144000,1286000],3:[1159000,811000,580000],4:[864000,605000,432000,346000]}};
+var D="۰۱۲۳۴۵۶۷۸۹",fa=function(s){return String(s).replace(/\d/g,function(d){return D[d]})},
+f=function(n){return fa(Math.round(n).toLocaleString("en-US").replace(/,/g,"٬"))},
+d=function(n){return fa(String(n).replace(".","٫"))},
+T=function(p){return f(p*1000)};
+var hands=[100000000,60000000],MAXH=12,$=function(i){return document.getElementById(i)};
+function parse(s){return +(String(s).replace(/[۰-۹]/g,function(c){return D.indexOf(c)}).replace(/\D/g,""))||0}
+function niceMax(v){var m=Math.max(v*2,100000000),p=Math.pow(10,Math.floor(Math.log10(m))),k=m/p;return (k<=1?1:k<=2?2:k<=5?5:10)*p}
+function calc(toman){var pts=toman.map(function(x){return x/1000});
+var h=pts.slice().sort(function(a,b){return b-a}),m=[1],i;
+for(i=1;i<h.length;i++){var p=i+1,x;if(p==2)x=2.5;else{var b=p==3?3:p==4?3.5:4,t=p==3?3000:p==4?5000:10000;x=h[i]>t?b:m[i-1]}m.push(x)}
+var rest=0;for(i=1;i<h.length;i++)rest+=h[i]*m[i];var c1=Math.min(h[0]||0,rest);
+var I=h.filter(function(a){return a>=30000}).length,A=h.filter(function(a){return a>=50000}).length,
+Ps=h.filter(function(a){return a<30000}).reduce(function(a,b){return a+b},0),
+rem=function(k){return h.slice(k).reduce(function(a,b){return a+b},0)},r;
+if(I>=4)r=["حامی الماس",170];
+else if(I>=3&&rem(3)>=10000)r=["حامی پلاتینیوم",130];
+else if(I>=2&&(h[2]||0)>=15000)r=["حامی طلایی تک‌ستاره",120];
+else if(I>=2&&rem(2)>=10000)r=["حامی طلایی",80];
+else if(I>=1&&rem(1)>=10000)r=["حامی نقره‌ای",40];
+else if(h.filter(function(a){return a>=3000}).length>=2)r=["نماینده",50];
+else r=["پایین‌تر از نماینده",0];
+if(A>=4)r=["الماس پلاس",260];else if(A>=3&&r[1]>=80)r=["ویژه (۳ دست بالای ۵۰ میلیون)",240];
+var P=c1+rest,p1=Math.min(P,40000),p2=Math.max(P-40000,0);
+return{I:I,Ps:Ps,h:h,m:m,rest:rest,c1:c1,burn:(h[0]||0)-c1,P:P,rank:r,p1:p1,p2:p2,inc:p1*r[1]+p2*18.5}}
+function rows(){var s="",sl=$("sl").checked;hands.forEach(function(v,i){
+s+='<div class="hand"><div class="row"><b>دست '+fa(i+1)+'</b><input type="text" inputmode="numeric" value="'+v+'" data-i="'+i+'" aria-label="دست '+(i+1)+'">'
++'<button class="s" data-m="'+i+'" aria-label="کم">−</button><button class="s" data-p="'+i+'" aria-label="زیاد">+</button>'
++(hands.length>2?'<button class="x" data-r="'+i+'" aria-label="حذف">×</button>':'')+'</div>'
++'<div class="mut" id="t'+i+'">'+f(v)+' تومان</div>'
++(sl?'<div class="row"><input type="range" min="0" max="'+niceMax(v)+'" step="500000" value="'+v+'" data-s="'+i+'"></div>':'')+'</div>'});$("rows").innerHTML=s}
+function upd(){var r=calc(hands),i;$("inc").textContent=f(r.inc);
+$("parts").innerHTML=r.rank[1]?("بخش اول: "+f(r.p1)+" × "+fa(r.rank[1])+" = "+f(r.p1*r.rank[1])+"<br>بخش دوم: "+f(r.p2)+" × "+d("18.5")+" = "+f(r.p2*18.5)):"شرط نماینده (۲ دست بالای ۳ میلیون) برقرار نیست";
+var c="",top=-1;LV.forEach(function(l,k){var ok=r.inc>=l[1];if(ok)top=k;c+='<span class="chip'+(ok?" on":"")+'">'+(ok?"✓ ":"")+'کارآفرین '+l[0]+" · "+d(l[1]/1e6)+" م</span>"});$("chips").innerHTML=c;
+$("nxt").textContent=top<4?"تا سمت "+LV[top+1][0]+" "+f(LV[top+1][1]-r.inc)+" تومان فاصله دارد.":"به بالاترین سمت رسیده‌اید.";
+$("rank").innerHTML='<div class="mut">دست‌های بالای ۳۰ میلیون: '+fa(r.I)+' · جمع دست‌های کوچک‌تر (شخصی): '+T(r.Ps)+' تومان</div><div style="font-size:18px;font-weight:700">'+r.rank[0]+'</div><div>نرخ ۴۰ هزار امتیاز اول: <b>'+fa(r.rank[1])+'</b> تومان</div><div>نرخ مابقی: <b>'+d("18.5")+'</b> تومان</div>';
+var t="";r.h.forEach(function(v,k){t+="<tr><td>"+fa(k+1)+"</td><td>"+T(v)+"</td><td>"+f(v)+"</td><td>"+d(r.m[k])+"</td><td>"+f(v*r.m[k])+"</td></tr>"});$("tb").innerHTML=t;
+var mx=Math.max(r.h[0]||1,r.rest,1);
+$("b1").innerHTML='<i style="width:'+(r.c1/mx*100)+'%;background:var(--ok)"></i><i style="width:'+(r.burn/mx*100)+'%;background:var(--red)"></i>';
+$("b2").innerHTML='<i style="width:'+(r.rest/mx*100)+'%;background:var(--gold)"></i>';
+$("burn").innerHTML=r.burn>0?'<span class="red">'+f(r.burn)+" امتیاز از دست اول می‌سوزد؛ دست‌های بعدی را قوی‌تر کنید.</span>":'<span class="ok">سوختی ندارید؛ دست اول کامل شمرده می‌شود.</span>';
+var s="";r.h.forEach(function(v,k){s+="<li>دست "+fa(k+1)+": "+f(v)+" × "+d(r.m[k])+" = "+f(v*r.m[k])+"</li>"});
+s+="<li>مجموع دست‌های ۲ به بعد = "+f(r.rest)+"</li><li>دست اول شمرده‌شده = کمینه‌ی (دست اول، "+f(r.rest)+") = "+f(r.c1)+"</li>";
+s+="<li>رتبه: "+r.rank[0]+" ← نرخ "+fa(r.rank[1])+"</li><li><b>حجم محاسبه‌شده = "+f(r.c1)+" + "+f(r.rest)+" = "+f(r.P)+" امتیاز</b></li>";
+s+="<li>بخش اول: "+f(r.p1)+" × "+fa(r.rank[1])+" = "+f(r.p1*r.rank[1])+"</li><li>بخش دوم: ("+f(r.P)+" − ۴۰٬۰۰۰) = "+f(r.p2)+" ← "+f(r.p2)+" × "+d("18.5")+" = "+f(r.p2*18.5)+"</li>";
+s+="<li>جمع = "+f(r.p1*r.rank[1])+" + "+f(r.p2*18.5)+"</li><li><b>درآمد = "+f(r.inc)+" تومان</b></li>";$("steps").innerHTML=s}
+function setHand(i,v,skipInput){hands[i]=v;$("t"+i).textContent=f(v)+" تومان";var inp=document.querySelector('input[data-i="'+i+'"]');if(inp&&!skipInput)inp.value=v;
+var sl=document.querySelector('input[data-s="'+i+'"]');if(sl&&!sl.matches(":active")){sl.max=niceMax(v);sl.value=v}upd()}
+$("lv").innerHTML=LV.map(function(l,i){return '<option value="'+i+'">کارآفرین '+l[0]+" ("+d(l[1]/1e6)+" میلیون)</option>"}).join("");
+document.addEventListener("input",function(e){var t=e.target;
+if(t.dataset.i!==undefined){setHand(+t.dataset.i,parse(t.value),true)}
+else if(t.dataset.s!==undefined){setHand(+t.dataset.s,+t.value)}});
+document.addEventListener("click",function(e){var t=e.target;
+if(t.dataset.n){hands=PRE[$("lv").value][t.dataset.n].map(function(p){return p*1000});rows();upd()}
+else if(t.dataset.r!==undefined){hands.splice(+t.dataset.r,1);rows();upd()}
+else if(t.dataset.m!==undefined){var i=+t.dataset.m;setHand(i,Math.max(0,Math.round(hands[i]*0.9/1000000)*1000000))}
+else if(t.dataset.p!==undefined){var j=+t.dataset.p;setHand(j,Math.max(1000000,Math.round(hands[j]*1.1/1000000)*1000000))}
+else if(t.id=="add"){if(hands.length<MAXH){hands.push(10000000);rows();upd()}}
+else if(t.id=="rst"){hands=[100000000,60000000];rows();upd()}});
+$("sl").addEventListener("change",function(){rows()});
+rows();upd();
+var dp,standalone=window.matchMedia("(display-mode: standalone)").matches||navigator.standalone;
+if(!standalone){
+window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();dp=e;$("inst").hidden=false;$("instcard").hidden=false});
+if(/iphone|ipad|ipod/i.test(navigator.userAgent)){$("ios").hidden=false;$("instcard").hidden=false}
+$("inst").addEventListener("click",function(){if(dp){dp.prompt();dp=null;$("inst").hidden=true;$("instcard").hidden=true}})}
+if("serviceWorker" in navigator&&/^https?:/.test(location.protocol)){window.addEventListener("load",function(){navigator.serviceWorker.register("sw.js").catch(function(){})})}
+</script>
+</body>
+</html>
